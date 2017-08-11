@@ -174,7 +174,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
-
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
