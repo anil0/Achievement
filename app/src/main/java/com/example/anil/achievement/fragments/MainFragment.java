@@ -91,7 +91,9 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, Google
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.setBuildingsEnabled(false);
+
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         mMap.setOnMarkerClickListener( this );
@@ -102,7 +104,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, Google
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
-    public void setUserMarker(LatLng latLng)
+    public void setUserMarker(LatLng latLng, float bearing)
     {
         //refresh and remove everything from map
         mMap.clear();
@@ -116,22 +118,23 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, Google
 
             userMarker = new MarkerOptions()
                     .position(latLng)
-                    .title("Current Location");
+                    .title("Current Location")
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow));
 
             currentLocationMarker = mMap.addMarker(userMarker);
             Log.v("MAPS","Current Location - Lat: " + latLng.latitude + " Long: " + latLng.longitude);
         }
 
         currentLocationMarker.setPosition(latLng);
-        Toast.makeText(getContext(), "Updated position", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(), "Updated position", Toast.LENGTH_LONG).show();
 
         //handle the tilt view
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)
                 //.target(new LatLng(53, -2.23333))
-                .zoom(18)
+                .zoom(19)
                 .tilt(67.5f)
-                .bearing(314)
+                .bearing(bearing)
                 .build();
 
         //move camera to current user location

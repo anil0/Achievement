@@ -32,16 +32,11 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
 
     private Location mLastKnownLocation;
 
-    //Handler UI_HANDLER = new Handler();
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-        //do an initial run after 10 seconds
-        //UI_HANDLER.postDelayed(UI_UPDTAE_RUNNABLE, 10000);
 
         //build api client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -67,7 +62,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
 
         try
         {
-            LocationRequest request = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(1000);
+            LocationRequest request = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(5000);
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, request, this);
         }
         catch (SecurityException ex)
@@ -95,17 +90,19 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
         super.onStop();
     }
 
-//    @Override
-//    protected void onPause() {
-//        mGoogleApiClient.disconnect();
-//        super.onPause();
-//    }
+    @Override
+    protected void onPause() {
+        mGoogleApiClient.disconnect();
+        Log.v("LOCATION", "Paused - disconnected");
+        super.onPause();
+    }
 
-//    @Override
-//    protected void onResume() {
-//        mGoogleApiClient.connect();
-//        super.onResume();
-//    }
+    @Override
+    protected void onResume() {
+        mGoogleApiClient.connect();
+        Log.v("LOCATION", "Resumed - connected");
+        super.onResume();
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
@@ -165,38 +162,16 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
     @Override
     public void onLocationChanged(Location location)
     {
-//        try
-//        {
-//            //wait 10 seconds
-//            Thread.sleep(10000);
-//        }
-//        catch (InterruptedException e)
-//        {
-//            e.printStackTrace();
-//        }
-
         mLastKnownLocation = location;
 
         Log.v("MAPS","Long: " + location.getLongitude() + "- Lat: " + location.getLatitude());
-        Toast.makeText(getApplicationContext(), "Lat: " + location.getLatitude() + " - Long: " + location.getLongitude(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Lat: " + location.getLatitude() + " - Long: " + location.getLongitude(), Toast.LENGTH_LONG).show();
         Log.v("LOCATION CHANGED", location.getLatitude() + "");
         Log.v("LOCATION CHANGED", location.getLongitude() + "");
-        mainFragment.setUserMarker(new LatLng(location.getLatitude(), location.getLongitude()));
+        Log.v("LOCATION CHANGED", location.getBearing() + "");
+
+        mainFragment.setUserMarker(new LatLng(location.getLatitude(), location.getLongitude()), location.getBearing());
     }
-
-
-//    Runnable UI_UPDTAE_RUNNABLE = new Runnable()
-//    {
-//        @Override
-//        public void run()
-//        {
-//            onLocationChanged(mLastKnownLocation);
-//            //drawAllMarker();//Method that will get employee location and draw it on map
-//
-//            //run from here on out every 10 seconds so the location is actually being updated
-//            UI_HANDLER.postDelayed(UI_UPDTAE_RUNNABLE, 10000);
-//        }
-//    };
 
 
 }
